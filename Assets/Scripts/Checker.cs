@@ -13,7 +13,7 @@ public class Checker : MonoBehaviour
     void Awake() {
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
-        CreateShape(0,0,0,1,1,1,1,0);
+        CreateShape(-1,1,1,1,1,-1,-1,-1);
         GetComponent<MeshCollider>().sharedMesh = mesh;
     }
     void OnEnable()
@@ -33,7 +33,8 @@ public class Checker : MonoBehaviour
             new Vector3(e,f,0),
             new Vector3(g,h,0),
         };
-        triangles = new int[3*2];
+        triangles = new int[]
+        {0,1,2,2,3,0};
     }
     void UpdateMesh()
     {
