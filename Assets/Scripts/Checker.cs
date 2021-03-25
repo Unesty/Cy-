@@ -8,8 +8,8 @@ public class Checker : MonoBehaviour
     public Checker[] connected = new Checker[4];//clockwise from the top
     public List<PlayerController> players;
     public Mesh mesh;
-    public Vector3[] vertices;
-    public int[] triangles;
+    public Vector3[] vertices = new Vector3[4];
+    public int[] triangles = new int[6];
     void Awake() {
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
@@ -36,7 +36,7 @@ public class Checker : MonoBehaviour
         triangles = new int[]
         {0,1,2,2,3,0};
     }
-    void UpdateMesh()
+    public void UpdateMesh()
     {
         mesh.Clear();
         mesh.vertices = vertices;
