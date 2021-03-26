@@ -26,6 +26,7 @@ public class Tileplan : MonoBehaviour
     //public float[,] h_edge = new float[4,2];
     ushort tick=0;
     public Camera cam;
+    Checker ontile;
     void Awake() {
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
@@ -68,40 +69,41 @@ public class Tileplan : MonoBehaviour
                         int n=v+1;
                         if(n==4) n=0;
                         Vector3 ipoint;
-                        if(LineLineIntersection(out ipoint, player.GetComponent<PlayerController>().ontile.vertices[v]+player.GetComponent<PlayerController>().ontile.transform.position, player.GetComponent<PlayerController>().ontile.vertices[n]+player.GetComponent<PlayerController>().ontile.transform.position,player.GetComponent<PlayerController>().ontile.transform.position,hit.point)) {
+                        ontile = player.GetComponent<PlayerController>().ontile;
+                        if(LineLineIntersection(out ipoint, ontile.vertices[v]+ontile.transform.position, ontile.vertices[n]+ontile.transform.position,ontile.transform.position,hit.point)) {
                             print(hit.point);
                             print("intersected at" + ipoint);
                             //TODO detect new triangle overlaps with vertices, edges, colliders
                             if(v==0) {
-                                vertices[3]=player.GetComponent<PlayerController>().ontile.vertices[0];
-                                vertices[2]=player.GetComponent<PlayerController>().ontile.vertices[1];
+                                vertices[3]=ontile.transform.TransformPoint(ontile.vertices[0]);
+                                vertices[2]=ontile.transform.TransformPoint(ontile.vertices[1]);
                                 vertices[1] = Vector3.back;
                                 vertices[0] = Vector3.back;
-                                connected[2]=player.GetComponent<PlayerController>().ontile;
+                                connected[2]=ontile;
                                 side=0;
                                 print("top");
                             } else if(v==1) {
-                                vertices[0]=player.GetComponent<PlayerController>().ontile.vertices[1];
-                                vertices[3]=player.GetComponent<PlayerController>().ontile.vertices[2];
+                                vertices[0]=ontile.transform.TransformPoint(ontile.vertices[1]);
+                                vertices[3]=ontile.transform.TransformPoint(ontile.vertices[2]);
                                 vertices[2] = Vector3.back;
                                 vertices[1] = Vector3.back;
-                                connected[3]=player.GetComponent<PlayerController>().ontile;
+                                connected[3]=ontile;
                                 side=1;
                                 print("right");
                             } else if(v==2) {
-                                vertices[1]=player.GetComponent<PlayerController>().ontile.vertices[2];
-                                vertices[0]=player.GetComponent<PlayerController>().ontile.vertices[3];
+                                vertices[1]=ontile.transform.TransformPoint(ontile.vertices[2]);
+                                vertices[0]=ontile.transform.TransformPoint(ontile.vertices[3]);
                                 vertices[2] = Vector3.back;
                                 vertices[3] = Vector3.back;
-                                connected[0]=player.GetComponent<PlayerController>().ontile;
+                                connected[0]=ontile;
                                 side=2;
                                 print("bottom");
                             } else if(v==3) {
-                                vertices[2]=player.GetComponent<PlayerController>().ontile.vertices[3];
-                                vertices[1]=player.GetComponent<PlayerController>().ontile.vertices[0];
+                                vertices[2]=ontile.transform.TransformPoint(ontile.vertices[3]);
+                                vertices[1]=ontile.transform.TransformPoint(ontile.vertices[0]);
                                 vertices[3] = Vector3.back;
                                 vertices[0] = Vector3.back;
-                                connected[1]=player.GetComponent<PlayerController>().ontile;
+                                connected[1]=ontile;
                                 side=3;
                                 print("left");
                             }
@@ -143,16 +145,16 @@ public class Tileplan : MonoBehaviour
                     case states.modify:
                         if(tick==1){
                             if(state==states.modify) {
-                                Vector3 newtransform = MiddlePoint();
-                                GameObject newtile = Instantiate(checker_prefab, newtransform, new Quaternion(0,0,0,0));
+                                Vector3 newposition = MiddlePoint();
+                                GameObject newtile = Instantiate(checker_prefab, newposition, new Quaternion(0,0,0,0));
                                 Checker newchecker = newtile.GetComponent<Checker>();
-                                print("new tile"+newtransform);
+                                print("new tile"+newposition);
                                 for(ushort i=0;i<4;i++) {
-                                    newchecker.vertices[i]=vertices[i]-newtransform;
+                                    newchecker.vertices[i]=vertices[i]-newposition;
                                 }
                                 newchecker.UpdateMesh();
                                 newchecker.connected=(Checker[])connected.Clone();
-                                player.GetComponent<PlayerController>().ontile.connected[side]=newchecker;
+                                ontile.connected[side]=newchecker;
                                 vertices[0]=Vector3.zero;
                                 vertices[1]=Vector3.zero;
                                 vertices[2]=Vector3.zero;
@@ -164,6 +166,7 @@ public class Tileplan : MonoBehaviour
                                 mesh.Clear();
                                 mesh.vertices = vertices;
                                 mesh.triangles = triangles;
+                                player.GetComponent<PlayerController>().building = false;
                                 gameObject.SetActive(false);
                                 state=states.edge;
                             }
@@ -262,11 +265,11 @@ public class Tileplan : MonoBehaviour
         }
         return Area;
     }
+    public Vector3 mid;
     Vector3 MiddlePoint()
     {
         float x = (vertices[0][0]+vertices[1][0]+vertices[2][0]+vertices[3][0])*0.25f;
         float y = (vertices[0][1]+vertices[1][1]+vertices[2][1]+vertices[3][1])*0.25f;
-
         return new Vector3(x,y,0f);
     }
 }

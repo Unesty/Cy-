@@ -5,11 +5,14 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    public Camera cam;
     public Checker ontile;
+    public float camspeed;
     
     public bool building;
     public GameObject tileplan; //move tile creation to item
     NewControls input;
+    Vector3 pos = new Vector3();
     //public 
     
     // Start is called before the first frame update
@@ -21,8 +24,12 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(building==true)
-            StartBuilding();
+        var mousepos = Mouse.current.position.ReadValue();
+        if(Mouse.current.middleButton.isPressed) {
+            pos[0]+=mousepos[0]*camspeed;
+            pos[1]+=mousepos[1]*camspeed;
+            cam.transform.position = new Vector3(pos[0],pos[1],-10f);
+        }
     }
     
     void StartBuilding()
@@ -33,6 +40,7 @@ public class PlayerController : MonoBehaviour
     
     void HandlePointer()
     {
+        
     }
     
     //void OnMouseClick()
