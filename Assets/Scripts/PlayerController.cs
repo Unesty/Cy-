@@ -13,6 +13,8 @@ public class PlayerController : MonoBehaviour
     public GameObject tileplan; //move tile creation to item
     NewControls input;
     Vector3 pos = new Vector3();
+    [SerializeField]
+    Game gameManager;
     //public 
     
     // Start is called before the first frame update
@@ -44,9 +46,14 @@ public class PlayerController : MonoBehaviour
     }
     
     //void OnMouseClick()
+    public void BeginTurn()
+    {
+
+    }
+
     public void EndTurn() 
     {
-        
+        gameManager.CallEndTurn(this);
     }
     
     //public void BuildTile()

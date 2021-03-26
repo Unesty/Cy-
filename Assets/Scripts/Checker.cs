@@ -14,7 +14,7 @@ public class Checker : MonoBehaviour
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
         CreateShape(-1,1,1,1,1,-1,-1,-1);
-        GetComponent<MeshCollider>().sharedMesh = mesh;
+        GetComponent<MeshCollider>().sharedMesh = mesh;   
     }
     void OnEnable()
     {
@@ -41,6 +41,12 @@ public class Checker : MonoBehaviour
         mesh.Clear();
         mesh.vertices = vertices;
         mesh.triangles = triangles;
+        mesh.uv = new Vector2[]{
+                new Vector2(-1,1),
+                new Vector2(1,1),
+                new Vector2(1,-1),
+                new Vector2(-1,-1),                
+        };
         GetComponent<MeshCollider>().sharedMesh = mesh;
     }
     void Update()
